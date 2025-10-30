@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status, Response
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -108,4 +108,5 @@ def delete_note_endpoint(
     if not note:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Note not found")
     crud.delete_note(db, note)
-    return None
+    # For 204 No Content, FastAPI must not send a body
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
