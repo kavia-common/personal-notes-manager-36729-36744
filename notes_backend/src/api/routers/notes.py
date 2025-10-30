@@ -92,21 +92,21 @@ def update_note_endpoint(
 @router.delete(
     "/{note_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
     summary="Delete a note",
     description="Delete a note by its ID.",
     responses={
-        204: {"description": "Note deleted successfully"},
         404: {"description": "Note not found"},
     },
 )
 def delete_note_endpoint(
     note_id: int = Path(..., ge=1, description="ID of the note to delete"),
     db: Session = Depends(get_db),
-) -> None:
+):
     """Delete a note by ID or return 404 if it does not exist."""
     note = crud.get_note(db, note_id)
     if not note:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Note not found")
     crud.delete_note(db, note)
-    # For 204 No Content, FastAPI must not send a body
+    # Return an explicit empty response with 204 No Content
     return Response(status_code=status.HTTP_204_NO_CONTENT)
